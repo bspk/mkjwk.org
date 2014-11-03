@@ -3,3 +3,7 @@ body {
   padding-top: 50px;
   padding-bottom: 20px;
 }
+
+.nav-tabs > .active > a, .nav-tabs > .active > a:hover { 
+	outline: 0;
+}
