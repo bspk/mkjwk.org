@@ -242,6 +242,45 @@
 
 
 				<!-- shared secret -->
+				<div class="row control-panel">
+				
+					<div class="form-group col-md-2">
+						<label for="oct-size">Key Size</label>
+						<input class="form-control" type="number" min="16" max="16384" step="8" value="2048" id="oct-size"></input>
+					</div>
+					
+					<div class="form-group col-md-2">
+						<label for="oct-use">Key Use</label>
+						<select class="form-control" id="oct-use">
+							<option value="" selected></option>
+							<option value="sig">Signing</option>
+							<option value="enc">Encryption</option>
+						</select>
+					</div>
+
+					<div class="form-group col-md-2">
+						<label for="oct-alg">Algorithm</label>
+						<select class="form-control" id="oct-alg">
+							<option value="" selected></option>
+							<option value="HS256">HS256</option>
+							<option value="HS384">HS384</option>
+							<option value="HS512">HS512</option>
+						</select>
+					</div>
+
+					<div class="form-group col-md-3">
+						<label for="oct-kid">Key ID</label>
+						<input class="form-control" id="oct-kid"></input>
+					</div>
+					
+				
+					<div class="col-md-2 col-md-offset-1">
+						<label for="oct-mk">Generate</label>
+						<button class="btn btn-primary" id="oct-mk"><span class="glyphicon glyphicon-refresh"></span> New Key</button>
+					</div>
+						
+				</div>
+
 				<div class="row" id="oct">
 					<div class="col-md-4">
 						<h2>Key</h2>
@@ -353,6 +392,41 @@
 	 				$('#ec-set').html(JSON.stringify(data.jwks, null, 2));
 	 				$('#ec-public').html(JSON.stringify(data.pub, null, 2));
 	 				$('#ec-mk').prop('disabled', false);
+	 				prettyPrint();
+	 			},
+	 			error: function(jqxhr, status, err) {
+	 				console.log(err);
+	 			}
+	 		});
+			
+		});
+		
+		$('#oct-mk').click(function(e) {
+			e.preventDefault();
+			
+			$('#oct-mk').prop('disabled', true);
+			$('#oct-keypair').html('Loading...');
+			$('#oct-set').html('Loading...');
+
+			
+			var opts = {};
+			
+			opts.size = $('#oct-size').val();
+			opts.use = $('#oct-use').val();
+			opts.alg = $('#oct-alg').val();
+			opts.kid = $('#oct-kid').val();
+			
+			// clean object
+			for(var k in opts) {
+				   if(!opts[k]) delete opts[k];
+			}
+			
+	 		$.ajax('jwk/oct', {
+	 			data: opts,
+	 			success: function(data, status, jqxhr) {
+	 				$('#oct-keypair').html(JSON.stringify(data.jwk, null, 2));
+	 				$('#oct-set').html(JSON.stringify(data.jwks, null, 2));
+	 				$('#oct-mk').prop('disabled', false);
 	 				prettyPrint();
 	 			},
 	 			error: function(jqxhr, status, err) {
