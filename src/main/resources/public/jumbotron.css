@@ -7,3 +7,17 @@ body {
 .nav-tabs > .active > a, .nav-tabs > .active > a:hover { 
 	outline: 0;
 }
+
+.jumbotron a {
+	font-weight: bold;
+}
+
+pre {
+	white-space: pre-wrap !important;
+	padding: 9.5px !important;
+}
+
+.control-panel {
+	margin-top: 10px;
+	margin-bottom: 8px;
+}
