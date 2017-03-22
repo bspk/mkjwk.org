@@ -42,7 +42,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<start-class>edu.mit.mkjwk.Application</start-class>
+		<start-class>edu.mit.mkjwk.MkJwk</start-class>
 		<java.version>1.7</java.version>
 	</properties>
 
