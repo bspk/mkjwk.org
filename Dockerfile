@@ -1,9 +1,11 @@
-FROM openjdk:7-jre-alpine
+FROM maven:3-jdk-8 AS builder
 
-VOLUME /tmp
+RUN mkdir /build
+WORKDIR /build
+ADD . /build
+RUN mvn -Dmaven.test.skip=true -Dmaven.javadoc.skip=true package
 
-ADD target/ROOT.war app.jar
-RUN sh -c 'touch /app.jar'
-ENV JAVA_OPTS=""
+FROM openjdk:8-jre-alpine
 
+COPY --from=builder /build/target/ROOT.war /app.jar
 ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app.jar" ]
