@@ -1,15 +1,14 @@
 package edu.mit.mkjwk;
 
 import java.util.Map;
-
 import org.mitre.jose.jwk.ECKeyMaker;
 import org.mitre.jose.jwk.OctetSequenceKeyMaker;
 import org.mitre.jose.jwk.RSAKeyMaker;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.nimbusds.jose.Algorithm;
@@ -21,6 +20,7 @@ import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.KeyUse;
 
 @RestController
+@CrossOrigin
 @RequestMapping(value = "/jwk", produces = "application/json")
 public class API {
 
