@@ -303,11 +303,13 @@ const KeyDisplay = ({...props}) => {
 		return (
 			<Columns>
 			<Columns.Column size='half'>
+					<p>Shared Key</p>
 					<SyntaxHighlighter language='json' 
 						customStyle={{wordBreak: 'break-all', wordWrap: 'break-word', whiteSpace: 'pre-wrap'}}
 						>{props.keys.jwk ? JSON.stringify(props.keys.jwk, null, 4) : ''}</SyntaxHighlighter>
 				</Columns.Column>
 				<Columns.Column size='half'>
+					<p>Shared Key Set</p>
 					<SyntaxHighlighter language='json' 
 						customStyle={{wordBreak: 'break-all', wordWrap: 'break-word', whiteSpace: 'pre-wrap'}}
 						>{props.keys.jwks ? JSON.stringify(props.keys.jwks, null, 4) : ''}</SyntaxHighlighter>
