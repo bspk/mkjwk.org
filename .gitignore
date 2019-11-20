@@ -11,3 +11,5 @@ bin
 /target
 .springBeans
 nb-configuration.xml
+node_modules
+src/main/resources/static/built
