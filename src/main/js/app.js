@@ -126,7 +126,7 @@ const KeyProps = ({...props}) => {
 						<Form.Field>
 							<Form.Label>Key Use</Form.Label>
 							<Form.Control>
-								<Form.Select onChange={props.setUse} value={props.use || ''}>
+								<Form.Select onChange={props.setUse} value={props.use || ''}  className='is-fullwidth'>
 									<option value=''></option>
 									<option value='sig'>Signature</option>
 									<option value='enc'>Encryption</option>
@@ -138,7 +138,7 @@ const KeyProps = ({...props}) => {
 					<Form.Field>
 						<Form.Label>Algorithm</Form.Label>
 						<Form.Control>
-							<Form.Select onChange={props.setAlg} value={props.alg || ''}>
+							<Form.Select onChange={props.setAlg} value={props.alg || ''}  className='is-fullwidth'>
 								<option value=''></option>
 								<option value='RS256'>RS256</option>
 								<option value='RS384'>RS384</option>
@@ -159,7 +159,7 @@ const KeyProps = ({...props}) => {
 						</Form.Field>
 					</Columns.Column>
 					<Columns.Column>
-						<Button onClick={props.generate}>Generate</Button>
+					<Button onClick={props.generate} fullwidth color='primary'>Generate</Button>
 					</Columns.Column>
 				</Columns>
 		);
@@ -170,7 +170,7 @@ const KeyProps = ({...props}) => {
 						<Form.Field>
 							<Form.Label>Curve</Form.Label>
 							<Form.Control>
-								<Form.Select onChange={props.setCrv} value={props.crv || 'P-256'}>
+								<Form.Select onChange={props.setCrv} value={props.crv || 'P-256'} className='is-fullwidth'>
 									<option value='P-256'>P-256</option>
 									<option value='P-384'>P-384</option>
 									<option value='P-521'>P-521</option>
@@ -187,7 +187,7 @@ const KeyProps = ({...props}) => {
 						<Form.Field>
 							<Form.Label>Key Use</Form.Label>
 							<Form.Control>
-								<Form.Select onChange={props.setUse} value={props.use || ''}>
+								<Form.Select onChange={props.setUse} value={props.use || ''}  className='is-fullwidth'>
 									<option value=''></option>
 									<option value='sig'>Signature</option>
 									<option value='enc'>Encryption</option>
@@ -199,7 +199,7 @@ const KeyProps = ({...props}) => {
 					<Form.Field>
 						<Form.Label>Algorithm</Form.Label>
 						<Form.Control>
-							<Form.Select onChange={props.setAlg} value={props.alg || ''}>
+							<Form.Select onChange={props.setAlg} value={props.alg || ''}  className='is-fullwidth'>
 								<option value=''></option>
 								<option value='ES256'>ES256</option>
 								<option value='ES384'>ES384</option>
@@ -219,7 +219,7 @@ const KeyProps = ({...props}) => {
 						</Form.Field>
 					</Columns.Column>
 					<Columns.Column>
-					<Button onClick={props.generate}>Generate</Button>
+					<Button onClick={props.generate} fullwidth color='primary'>Generate</Button>
 				</Columns.Column>
 				</Columns>
 		);
@@ -238,7 +238,7 @@ const KeyProps = ({...props}) => {
 						<Form.Field>
 							<Form.Label>Key Use</Form.Label>
 							<Form.Control>
-								<Form.Select onChange={props.setUse} value={props.use || ''}>
+								<Form.Select onChange={props.setUse} value={props.use || ''}  className='is-fullwidth'>
 									<option value=''></option>
 									<option value='sig'>Signature</option>
 									<option value='enc'>Encryption</option>
@@ -250,7 +250,7 @@ const KeyProps = ({...props}) => {
 					<Form.Field>
 						<Form.Label>Algorithm</Form.Label>
 						<Form.Control>
-							<Form.Select onChange={props.setAlg} value={props.alg || ''}>
+							<Form.Select onChange={props.setAlg} value={props.alg || ''}  className='is-fullwidth'>
 								<option value=''></option>
 								<option value='HS256'>HS256</option>
 								<option value='HS384'>HS384</option>
@@ -268,7 +268,7 @@ const KeyProps = ({...props}) => {
 						</Form.Field>
 					</Columns.Column>
 					<Columns.Column>
-					<Button onClick={props.generate}>Generate</Button>
+					<Button onClick={props.generate} fullwidth color='primary'>Generate</Button>
 				</Columns.Column>
 				</Columns>
 		);
