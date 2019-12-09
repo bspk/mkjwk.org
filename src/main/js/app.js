@@ -2,6 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Button, Tabs, Container, Section, Level, Form, Columns } from 'react-bulma-components';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import i18n from './i18n';
+import { useTranslation } from 'react-i18next';
+import { Translation } from 'react-i18next';
 
 
 class MkJwk extends React.Component {
@@ -159,7 +162,7 @@ const KeyProps = ({...props}) => {
 						</Form.Field>
 					</Columns.Column>
 					<Columns.Column>
-					<Button onClick={props.generate} fullwidth color='primary'>Generate</Button>
+						<Button onClick={props.generate} fullwidth color='primary'>Generate</Button>
 					</Columns.Column>
 				</Columns>
 		);
@@ -219,8 +222,8 @@ const KeyProps = ({...props}) => {
 						</Form.Field>
 					</Columns.Column>
 					<Columns.Column>
-					<Button onClick={props.generate} fullwidth color='primary'>Generate</Button>
-				</Columns.Column>
+						<Button onClick={props.generate} fullwidth color='primary'>Generate</Button>
+					</Columns.Column>
 				</Columns>
 		);
 	} else if (props.kty == 'oct') {
@@ -268,8 +271,8 @@ const KeyProps = ({...props}) => {
 						</Form.Field>
 					</Columns.Column>
 					<Columns.Column>
-					<Button onClick={props.generate} fullwidth color='primary'>Generate</Button>
-				</Columns.Column>
+						<Button onClick={props.generate} fullwidth color='primary'>Generate</Button>
+					</Columns.Column>
 				</Columns>
 		);
 	}
@@ -302,7 +305,7 @@ const KeyDisplay = ({...props}) => {
 	} else {
 		return (
 			<Columns>
-			<Columns.Column size='half'>
+				<Columns.Column size='half'>
 					<p>Shared Key</p>
 					<SyntaxHighlighter language='json' 
 						customStyle={{wordBreak: 'break-all', wordWrap: 'break-word', whiteSpace: 'pre-wrap'}}
@@ -319,9 +322,64 @@ const KeyDisplay = ({...props}) => {
 	}
 }
 
+class LanguageSwitch extends React.Component {
+	constructor(props) {
+		super(props);
+		
+		this.state = {
+			language: 'en'
+		};
+		
+		if (props.lang) {
+			this.selectTab(props.lang)();
+		}
+	}
+	
+	selectTab = (lang) => () => {
+		// short circuit out if it's not changing
+		if (lang == this.state.language) {
+			return;
+		}
+		
+		var _self = this;
+		
+		i18n.changeLanguage(lang).then((t) => {
+			_self.setState({
+				language: lang
+			});
+		});
+	}
+	
+	render = () => {
+		return (
+			<Tabs type='toggle' className='has-background-dark'>
+				<Tabs.Tab active={this.state.language == 'en'} onClick={this.selectTab('en')}>
+				English
+				</Tabs.Tab>
+				<Tabs.Tab active={this.state.language == 'ja'} onClick={this.selectTab('ja')}>
+				日本語
+			</Tabs.Tab>
+	</Tabs>
+);
+	}
+}
+
+const urlObject = new URL(window.location);
+const lang = urlObject.searchParams.get('lang')
+console.log(lang)
 
 ReactDOM.render((
-		<MkJwk />
+	<LanguageSwitch lang={lang} />
+	), 
+	document.getElementById('languageSwitch')
+);
+
+ReactDOM.render((
+	<Translation i18n={i18n}>
+		{
+			(t, { i18n }) => <MkJwk t={t} />
+		}
+	</Translation>
 	),
 	document.getElementById('react')
 );
