@@ -6,7 +6,7 @@ const resources = {
 		en: {
 			translation: {
 				about: {
-					what: 'A <a href="https://tools.ietf.org/html/draft-ietf-jose-json-web-key">JSON Web Key (JWK)</a> is a cryptographic key or keypair expressed in JSON format. This site offers a mechanism to easily generate random keys for use in servers and other projects.',
+					what: 'A <a href="https://tools.ietf.org/html/rfc7517">JSON Web Key (JWK)</a> is a cryptographic key or keypair expressed in JSON format. This site offers a mechanism to easily generate random keys for use in servers and other projects.',
 					never: 'This server will <em>never log or store any generated keys</em>. The source code for this server is <a href="https://github.com/mitreid-connect/mkjwk.org">available on GitHub</a> for inspection and re-use. If you would like to generate your own key locally (so as not to trust a remote service with your secret keys), you can use the <a href="https://github.com/mitreid-connect/json-web-key-generator">command line utility</a> version of the library that powers this site.'
 				},
 				tabs: {
@@ -55,6 +55,8 @@ const resources = {
 					jwk: 'Public and Private Keypair',
 					jwks: 'Public and Private Keypair Set',
 					pub: 'Public Key',
+					shared_jwk: 'Shared Key',
+					shared_jwks: 'Shared Key Set',
 					copy: 'Copy to Clipboard' 
 				},
 				footer: 'Provided as a free service by <a href="https://bspk.io/">Bespoke Engineering</a> and <a href="https://www.authlete.com/">Authlete</a>.'
@@ -62,12 +64,29 @@ const resources = {
 		},
 		ja: {
 			translation: {
+				about: {
+					what: '<a href="https://tools.ietf.org/html/rfc7517">JSON Web Key (JWK)</a> は暗号鍵やそれらの組を JSON 形式で表現したものです。このサイトは、サーバーやその他のプロジェクトで利用できるランダムな鍵を簡単に生成する機能を提供します。',
+					never: 'このサーバーが<em>生成した鍵を保存したりログに残したりすることは決してありません</em>。内容確認や再利用を可能とするため、このサーバーのソースコードは <a href="https://github.com/mitreid-connect/mkjwk.org">GitHub 上で公開</a>してあります。（離れた場所で動いているサービスを信用することを避けて）自分用の鍵を手元で生成したいのであれば、このサイトでも利用している<a href="https://github.com/mitreid-connect/json-web-key-generator">コマンドライン・ユーティリティー</a>版を使うことができます。'
+				},
 				key_props: {
-					generate: '生成する'
+					generate: '生成する',
+					size: '鍵のサイズ',
+					use: '鍵の用途',
+					sig: '署名',
+					enc: '暗号',
+					alg: 'アルゴリズム',
+					kid: '鍵の ID',
+					crv: '曲線',
 				},
 				key_display: {
+					jwk: '公開鍵と秘密鍵',
+					jwks: '公開鍵と秘密鍵を含む JWK Set',
+					pub: '公開鍵',
+					shared_jwk: '共有鍵',
+					shared_jwks: '共有鍵の JWK Set',
 					copy: 'クリップボードにコピー'
-				}
+				},
+				footer: '<a href="https://bspk.io/">Bespoke Engineering 社</a>と <a href="https://www.authlete.com/">Authlete 社</a>が提供する無料サービス'
 			}
 		}
 };

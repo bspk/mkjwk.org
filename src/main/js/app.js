@@ -321,14 +321,14 @@ const KeyDisplay = ({...props}) => {
 		return (
 			<Columns>
 				<Columns.Column size='half'>
-					<p>Shared Key</p>
+					<p>{props.t('key_display.shared_jwk')}</p>
 					<SyntaxHighlighter language='json' 
 						customStyle={{wordBreak: 'break-all', wordWrap: 'break-word', whiteSpace: 'pre-wrap'}}
 						>{props.keys.jwk ? JSON.stringify(props.keys.jwk, null, 4) : ''}</SyntaxHighlighter>
 					<Button size="large" color="primary" fullwidth onClick={props.copyToClipboard('jwk')}>{props.t('key_display.copy')}</Button>
 				</Columns.Column>
 				<Columns.Column size='half'>
-					<p>Shared Key Set</p>
+					<p>{props.t('key_display.shared_jwks')}</p>
 					<SyntaxHighlighter language='json' 
 						customStyle={{wordBreak: 'break-all', wordWrap: 'break-word', whiteSpace: 'pre-wrap'}}
 						>{props.keys.jwks ? JSON.stringify(props.keys.jwks, null, 4) : ''}</SyntaxHighlighter>
@@ -344,6 +344,7 @@ const About = ({...props}) => {
 		<>
 			<p className="is-size-4" dangerouslySetInnerHTML={{__html: props.t('about.what')}}>
 			</p>
+			<br/>
 			<p className="is-size-4" dangerouslySetInnerHTML={{__html: props.t('about.never')}}>
 			</p>
 		</>
