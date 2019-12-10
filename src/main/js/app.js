@@ -249,8 +249,8 @@ const KeyProps = ({...props}) => {
 							<Form.Control>
 								<Form.Select onChange={props.setUse} value={props.use || ''}  className='is-fullwidth'>
 									<option value=''></option>
-									<option value='sig'>Signature</option>
-									<option value='enc'>Encryption</option>
+									<option value='sig'>{props.t('key_props.sig')}</option>
+									<option value='enc'>{props.t('key_props.enc')}</option>
 								</Form.Select>
 							</Form.Control>
 							</Form.Field>
