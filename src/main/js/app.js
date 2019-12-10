@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Button, Tabs, Container, Section, Level, Form, Columns } from 'react-bulma-components';
+import { Button, Tabs, Container, Section, Level, Form, Columns, Content } from 'react-bulma-components';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import i18n from './i18n';
 import { useTranslation } from 'react-i18next';
@@ -88,24 +88,30 @@ class MkJwk extends React.Component {
 		}
 	}
 	
+	copyToClipboard = (key) => () => {
+		if (this.state.keys[key]) {
+			navigator.clipboard.writeText(JSON.stringify(this.state.keys[key], null, 4));
+		}
+	}
+	
 	render() {
 		return (
 		<Section>
 			<Container>
 				<Tabs type='boxed'>
 					<Tabs.Tab active={this.state.kty == 'rsa'} onClick={this.selectTab('rsa')}>
-					RSA
+					{this.props.t('tabs.rsa')}
 					</Tabs.Tab>
 					<Tabs.Tab active={this.state.kty == 'ec'} onClick={this.selectTab('ec')}>
-					EC
+					{this.props.t('tabs.ec')}
 					</Tabs.Tab>
 					<Tabs.Tab active={this.state.kty == 'oct'} onClick={this.selectTab('oct')}>
-					oct
+					{this.props.t('tabs.oct')}
 					</Tabs.Tab>
 				</Tabs>
 				<KeyProps kty={this.state.kty} crv={this.state.crv} size={this.state.size} use={this.state.use} kid={this.state.kid} alg={this.state.alg}
-					setSize={this.setSize} setUse={this.setUse} setAlg={this.setAlg} setCrv={this.setCrv} setKid={this.setKid} generate={this.generate} />
-				<KeyDisplay kty={this.state.kty} keys={this.state.keys} />
+					setSize={this.setSize} setUse={this.setUse} setAlg={this.setAlg} setCrv={this.setCrv} setKid={this.setKid} generate={this.generate} t={this.props.t} />
+				<KeyDisplay kty={this.state.kty} keys={this.state.keys} t={this.props.t} copyToClipboard={this.copyToClipboard} />
 			</Container>
 		</Section>
 		);
@@ -119,7 +125,7 @@ const KeyProps = ({...props}) => {
 			<Columns>
 				<Columns.Column>
 						<Form.Field>
-							<Form.Label>Key Size</Form.Label>
+							<Form.Label>{props.t('key_props.size')}</Form.Label>
 							<Form.Control>
 								<Form.Input type='number' onChange={props.setSize} value={props.size || 0} min='0' step='8' />
 							</Form.Control>
@@ -127,42 +133,42 @@ const KeyProps = ({...props}) => {
 				</Columns.Column>
 				<Columns.Column>
 						<Form.Field>
-							<Form.Label>Key Use</Form.Label>
+							<Form.Label>{props.t('key_props.use')}</Form.Label>
 							<Form.Control>
 								<Form.Select onChange={props.setUse} value={props.use || ''}  className='is-fullwidth'>
 									<option value=''></option>
-									<option value='sig'>Signature</option>
-									<option value='enc'>Encryption</option>
+									<option value='sig'>{props.t('key_props.sig')}</option>
+									<option value='enc'>{props.t('key_props.enc')}</option>
 								</Form.Select>
 							</Form.Control>
 						</Form.Field>
 				</Columns.Column>
 				<Columns.Column>
 					<Form.Field>
-						<Form.Label>Algorithm</Form.Label>
+						<Form.Label>{props.t('key_props.alg')}</Form.Label>
 						<Form.Control>
 							<Form.Select onChange={props.setAlg} value={props.alg || ''}  className='is-fullwidth'>
 								<option value=''></option>
-								<option value='RS256'>RS256</option>
-								<option value='RS384'>RS384</option>
-								<option value='RS512'>RS512</option>
-								<option value='PS256'>PS256</option>
-								<option value='PS384'>PS384</option>
-								<option value='PS512'>PS512</option>
+								<option value='RS256'>{props.t('key_props.signing_alg.RS256')}</option>
+								<option value='RS384'>{props.t('key_props.signing_alg.RS384')}</option>
+								<option value='RS512'>{props.t('key_props.signing_alg.RS512')}</option>
+								<option value='PS256'>{props.t('key_props.signing_alg.PS256')}</option>
+								<option value='PS384'>{props.t('key_props.signing_alg.PS384')}</option>
+								<option value='PS512'>{props.t('key_props.signing_alg.PS512')}</option>
 							</Form.Select>
 						</Form.Control>
 						</Form.Field>
 				</Columns.Column>
 				<Columns.Column>
 						<Form.Field>
-							<Form.Label>Key ID</Form.Label>
+							<Form.Label>{props.t('key_props.kid')}</Form.Label>
 							<Form.Control>
 								<Form.Input type='text' onChange={props.setKid} value={props.kid || ''} />
 							</Form.Control>
 						</Form.Field>
 					</Columns.Column>
 					<Columns.Column>
-						<Button onClick={props.generate} fullwidth color='primary'>Generate</Button>
+						<GenerateButton generate={props.generate} t={props.t} />
 					</Columns.Column>
 				</Columns>
 		);
@@ -171,58 +177,58 @@ const KeyProps = ({...props}) => {
 				<Columns>
 					<Columns.Column>
 						<Form.Field>
-							<Form.Label>Curve</Form.Label>
+							<Form.Label>{props.t('key_props.crv')}</Form.Label>
 							<Form.Control>
 								<Form.Select onChange={props.setCrv} value={props.crv || 'P-256'} className='is-fullwidth'>
-									<option value='P-256'>P-256</option>
-									<option value='P-384'>P-384</option>
-									<option value='P-521'>P-521</option>
-									<option value='P-256K'>P-256K</option>
-									<option value='Ed25519'>Ed25519</option>
-									<option value='Ed448'>Ed448</option>
-									<option value='X25519'>X25519</option>
-									<option value='X448'>X448</option>
+									<option value='P-256'>{props.t('key_props.ec_crv.P256')}</option>
+									<option value='P-384'>{props.t('key_props.ec_crv.P384')}</option>
+									<option value='P-521'>{props.t('key_props.ec_crv.P521')}</option>
+									<option value='P-256K'>{props.t('key_props.ec_crv.P256K')}</option>
+									<option value='Ed25519'>{props.t('key_props.ec_crv.Ed25519')}</option>
+									<option value='Ed448'>{props.t('key_props.ec_crv.Ed448')}</option>
+									<option value='X25519'>{props.t('key_props.ec_crv.X25519')}</option>
+									<option value='X448'>{props.t('key_props.ec_crv.X448')}</option>
 								</Form.Select>
 							</Form.Control>
 						</Form.Field>
 					</Columns.Column>
 					<Columns.Column>
 						<Form.Field>
-							<Form.Label>Key Use</Form.Label>
+							<Form.Label>{props.t('key_props.use')}</Form.Label>
 							<Form.Control>
 								<Form.Select onChange={props.setUse} value={props.use || ''}  className='is-fullwidth'>
 									<option value=''></option>
-									<option value='sig'>Signature</option>
-									<option value='enc'>Encryption</option>
+									<option value='sig'>{props.t('key_props.sig')}</option>
+									<option value='enc'>{props.t('key_props.enc')}</option>
 								</Form.Select>
 							</Form.Control>
 							</Form.Field>
 					</Columns.Column>
 					<Columns.Column>
 					<Form.Field>
-						<Form.Label>Algorithm</Form.Label>
+						<Form.Label>{props.t('key_props.alg')}</Form.Label>
 						<Form.Control>
 							<Form.Select onChange={props.setAlg} value={props.alg || ''}  className='is-fullwidth'>
 								<option value=''></option>
-								<option value='ES256'>ES256</option>
-								<option value='ES384'>ES384</option>
-								<option value='ES512'>ES512</option>
-								<option value='EdDSA'>EdDSA</option>
-								<option value='ES256K'>ES256K</option>
+								<option value='ES256'>{props.t('key_props.signing_alg.ES256')}</option>
+								<option value='ES384'>{props.t('key_props.signing_alg.ES384')}</option>
+								<option value='ES512'>{props.t('key_props.signing_alg.ES512')}</option>
+								<option value='EdDSA'>{props.t('key_props.signing_alg.EdDSA')}</option>
+								<option value='ES256K'>{props.t('key_props.signing_alg.ES256K')}</option>
 							</Form.Select>
 						</Form.Control>
 						</Form.Field>
 					</Columns.Column>
 					<Columns.Column>
 						<Form.Field>
-							<Form.Label>Key ID</Form.Label>
+							<Form.Label>{props.t('key_props.kid')}</Form.Label>
 							<Form.Control>
 								<Form.Input type='text' onChange={props.setKid} value={props.kid || ''} />
 							</Form.Control>
 						</Form.Field>
 					</Columns.Column>
 					<Columns.Column>
-						<Button onClick={props.generate} fullwidth color='primary'>Generate</Button>
+						<GenerateButton generate={props.generate} t={props.t} />
 					</Columns.Column>
 				</Columns>
 		);
@@ -231,7 +237,7 @@ const KeyProps = ({...props}) => {
 				<Columns>
 					<Columns.Column>
 						<Form.Field>
-							<Form.Label>Key Size</Form.Label>
+							<Form.Label>{props.t('key_props.size')}</Form.Label>
 							<Form.Control>
 								<Form.Input type='number' onChange={props.setSize} value={props.size || 2048} min='0' step='8' />
 							</Form.Control>
@@ -239,7 +245,7 @@ const KeyProps = ({...props}) => {
 					</Columns.Column>
 					<Columns.Column>
 						<Form.Field>
-							<Form.Label>Key Use</Form.Label>
+							<Form.Label>{props.t('key_props.use')}</Form.Label>
 							<Form.Control>
 								<Form.Select onChange={props.setUse} value={props.use || ''}  className='is-fullwidth'>
 									<option value=''></option>
@@ -251,31 +257,37 @@ const KeyProps = ({...props}) => {
 					</Columns.Column>
 					<Columns.Column>
 					<Form.Field>
-						<Form.Label>Algorithm</Form.Label>
+						<Form.Label>{props.t('key_props.alg')}</Form.Label>
 						<Form.Control>
 							<Form.Select onChange={props.setAlg} value={props.alg || ''}  className='is-fullwidth'>
 								<option value=''></option>
-								<option value='HS256'>HS256</option>
-								<option value='HS384'>HS384</option>
-								<option value='HS512'>HS512</option>
+								<option value='HS256'>{props.t('key_props.signing_alg.HS256')}</option>
+								<option value='HS384'>{props.t('key_props.signing_alg.HS384')}</option>
+								<option value='HS512'>{props.t('key_props.signing_alg.HS512')}</option>
 							</Form.Select>
 						</Form.Control>
 						</Form.Field>
 					</Columns.Column>
 					<Columns.Column>
 						<Form.Field>
-							<Form.Label>Key ID</Form.Label>
+							<Form.Label>{props.t('key_props.kid')}</Form.Label>
 							<Form.Control>
 								<Form.Input type='text' onChange={props.setKid} value={props.kid || ''} />
 							</Form.Control>
 						</Form.Field>
 					</Columns.Column>
 					<Columns.Column>
-						<Button onClick={props.generate} fullwidth color='primary'>Generate</Button>
+						<GenerateButton generate={props.generate} t={props.t} />
 					</Columns.Column>
 				</Columns>
 		);
 	}
+}
+
+const GenerateButton = ({...props}) => {
+	return (
+		<Button onClick={props.generate} fullwidth color='primary' size='large'>{props.t('key_props.generate')}</Button>
+	);
 }
 
 const KeyDisplay = ({...props}) => {
@@ -283,22 +295,25 @@ const KeyDisplay = ({...props}) => {
 		return (
 			<Columns>
 				<Columns.Column size='one-third'>
-					<p>Public and Private Keypair</p>
+					<p>{props.t('key_display.jwk')}</p>
 					<SyntaxHighlighter language='json'
 						customStyle={{wordBreak: 'break-all', wordWrap: 'break-word', whiteSpace: 'pre-wrap'}}
 						>{props.keys.jwk ? JSON.stringify(props.keys.jwk, null, 4) : ''}</SyntaxHighlighter>
+					<Button size="large" color="primary" fullwidth onClick={props.copyToClipboard('jwk')}>{props.t('key_display.copy')}</Button>
 				</Columns.Column>
 				<Columns.Column size='one-third'>
-					<p>Public and Private Keypair Set</p>
+					<p>{props.t('key_display.jwks')}</p>
 					<SyntaxHighlighter language='json' 
 						customStyle={{wordBreak: 'break-all', wordWrap: 'break-word', whiteSpace: 'pre-wrap'}}
 						>{props.keys.jwks ? JSON.stringify(props.keys.jwks, null, 4) : ''}</SyntaxHighlighter>
+					<Button size="large" color="info" fullwidth onClick={props.copyToClipboard('jwks')}>{props.t('key_display.copy')}</Button>
 				</Columns.Column>
 				<Columns.Column size='one-third'>
-					<p>Public Key</p>
+					<p>{props.t('key_display.pub')}</p>
 					<SyntaxHighlighter language='json' 
 						customStyle={{wordBreak: 'break-all', wordWrap: 'break-word', whiteSpace: 'pre-wrap'}}
 						>{props.keys.pub ? JSON.stringify(props.keys.pub, null, 4) : ''}</SyntaxHighlighter>
+					<Button size="large" color="link" fullwidth onClick={props.copyToClipboard('pub')}>{props.t('key_display.copy')}</Button>
 				</Columns.Column>
 			</Columns>
 		);
@@ -310,16 +325,38 @@ const KeyDisplay = ({...props}) => {
 					<SyntaxHighlighter language='json' 
 						customStyle={{wordBreak: 'break-all', wordWrap: 'break-word', whiteSpace: 'pre-wrap'}}
 						>{props.keys.jwk ? JSON.stringify(props.keys.jwk, null, 4) : ''}</SyntaxHighlighter>
+					<Button size="large" color="primary" fullwidth onClick={props.copyToClipboard('jwk')}>{props.t('key_display.copy')}</Button>
 				</Columns.Column>
 				<Columns.Column size='half'>
 					<p>Shared Key Set</p>
 					<SyntaxHighlighter language='json' 
 						customStyle={{wordBreak: 'break-all', wordWrap: 'break-word', whiteSpace: 'pre-wrap'}}
 						>{props.keys.jwks ? JSON.stringify(props.keys.jwks, null, 4) : ''}</SyntaxHighlighter>
+					<Button size="large" color="info" fullwidth onClick={props.copyToClipboard('jwks')}>{props.t('key_display.copy')}</Button>
 				</Columns.Column>
 			</Columns>
 		);
 	}
+}
+
+const About = ({...props}) => {
+	return (
+		<>
+			<p className="is-size-4" dangerouslySetInnerHTML={{__html: props.t('about.what')}}>
+			</p>
+			<p className="is-size-4" dangerouslySetInnerHTML={{__html: props.t('about.never')}}>
+			</p>
+		</>
+	);
+}
+
+const Footer = ({...props}) => {
+	return (
+		<Content className='has-text-centered'>
+			<p dangerouslySetInnerHTML={{__html: props.t('footer')}}>
+			</p>
+		</Content>
+	);
 }
 
 class LanguageSwitch extends React.Component {
@@ -382,4 +419,24 @@ ReactDOM.render((
 	</Translation>
 	),
 	document.getElementById('react')
+);
+
+ReactDOM.render((
+	<Translation i18n={i18n}>
+		{
+			(t, { i18n }) => <Footer t={t} />
+		}
+	</Translation>
+	),
+	document.getElementById('footer')
+);
+
+ReactDOM.render((
+	<Translation i18n={i18n}>
+		{
+			(t, { i18n }) => <About t={t} />
+		}
+	</Translation>
+	),
+	document.getElementById('about')
 );
