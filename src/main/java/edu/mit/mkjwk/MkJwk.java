@@ -1,5 +1,8 @@
 package edu.mit.mkjwk;
 
+import java.security.Security;
+
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -7,7 +10,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class MkJwk {
 
     public static void main(String[] args) {
-        SpringApplication.run(MkJwk.class, args);
+    	Security.addProvider(new BouncyCastleProvider());
+
+    	SpringApplication.run(MkJwk.class, args);
     }
-    
+
 }

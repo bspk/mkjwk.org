@@ -9,10 +9,12 @@ const resources = {
 					what: 'A <a href="https://tools.ietf.org/html/rfc7517">JSON Web Key (JWK)</a> is a cryptographic key or keypair expressed in JSON format. This site offers a mechanism to easily generate random keys for use in servers and other projects.',
 					never: 'This server will <em>never log or store any generated keys</em>. The source code for this server is <a href="https://github.com/mitreid-connect/mkjwk.org">available on GitHub</a> for inspection and re-use. If you would like to generate your own key locally (so as not to trust a remote service with your secret keys), you can use the <a href="https://github.com/mitreid-connect/json-web-key-generator">command line utility</a> version of the library that powers this site.'
 				},
+				curve_required: 'Curve is required.',
 				tabs: {
 					rsa: 'RSA',
 					ec: 'EC',
-					oct: 'oct'
+					oct: 'oct',
+					okp: 'OKP'
 				},
 				key_props: {
 					generate: 'Generate',

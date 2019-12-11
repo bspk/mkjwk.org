@@ -30,6 +30,7 @@ class MkJwk extends React.Component {
 		this.setState({
 			kty: kty,
 			alg: null, // reset the algorithm when tabs change
+			crv: null, // reset the curve when tabs change
 			keys: { // reset the keys when tabs change
 				jwk: null,
 				jwks: null,
@@ -71,7 +72,13 @@ class MkJwk extends React.Component {
 			this.appendParam(url, 'size', this.state.size);
 		}
 		
-		if (this.state.kty == 'ec') {
+		if (this.state.kty == 'ec' || this.state.kty == 'okp') {
+			
+			if (!this.state.crv) {
+				alert(this.props.t('curve_required'));
+				return;
+			}
+			
 			this.appendParam(url, 'crv', this.state.crv);
 		}
 		
@@ -107,6 +114,9 @@ class MkJwk extends React.Component {
 					</Tabs.Tab>
 					<Tabs.Tab active={this.state.kty == 'oct'} onClick={this.selectTab('oct')}>
 					{this.props.t('tabs.oct')}
+					</Tabs.Tab>
+					<Tabs.Tab active={this.state.kty == 'okp'} onClick={this.selectTab('okp')}>
+					{this.props.t('tabs.okp')}
 					</Tabs.Tab>
 				</Tabs>
 				<KeyProps kty={this.state.kty} crv={this.state.crv} size={this.state.size} use={this.state.use} kid={this.state.kid} alg={this.state.alg}
@@ -179,15 +189,12 @@ const KeyProps = ({...props}) => {
 						<Form.Field>
 							<Form.Label>{props.t('key_props.crv')}</Form.Label>
 							<Form.Control>
-								<Form.Select onChange={props.setCrv} value={props.crv || 'P-256'} className='is-fullwidth'>
+								<Form.Select onChange={props.setCrv} value={props.crv || ''} className='is-fullwidth'>
+									<option value=''></option>
 									<option value='P-256'>{props.t('key_props.ec_crv.P256')}</option>
 									<option value='P-384'>{props.t('key_props.ec_crv.P384')}</option>
 									<option value='P-521'>{props.t('key_props.ec_crv.P521')}</option>
 									<option value='P-256K'>{props.t('key_props.ec_crv.P256K')}</option>
-									<option value='Ed25519'>{props.t('key_props.ec_crv.Ed25519')}</option>
-									<option value='Ed448'>{props.t('key_props.ec_crv.Ed448')}</option>
-									<option value='X25519'>{props.t('key_props.ec_crv.X25519')}</option>
-									<option value='X448'>{props.t('key_props.ec_crv.X448')}</option>
 								</Form.Select>
 							</Form.Control>
 						</Form.Field>
@@ -281,6 +288,59 @@ const KeyProps = ({...props}) => {
 					</Columns.Column>
 				</Columns>
 		);
+	} else if (props.kty == 'okp') {
+		return (
+				<Columns>
+					<Columns.Column>
+						<Form.Field>
+							<Form.Label>{props.t('key_props.crv')}</Form.Label>
+							<Form.Control>
+								<Form.Select onChange={props.setCrv} value={props.crv || ''} className='is-fullwidth'>
+									<option value=''></option>
+									<option value='Ed25519'>{props.t('key_props.ec_crv.Ed25519')}</option>
+									<option value='Ed448'>{props.t('key_props.ec_crv.Ed448')}</option>
+									<option value='X25519'>{props.t('key_props.ec_crv.X25519')}</option>
+									<option value='X448'>{props.t('key_props.ec_crv.X448')}</option>
+								</Form.Select>
+							</Form.Control>
+						</Form.Field>
+					</Columns.Column>
+					<Columns.Column>
+						<Form.Field>
+							<Form.Label>{props.t('key_props.use')}</Form.Label>
+							<Form.Control>
+								<Form.Select onChange={props.setUse} value={props.use || ''}  className='is-fullwidth'>
+									<option value=''></option>
+									<option value='sig'>{props.t('key_props.sig')}</option>
+									<option value='enc'>{props.t('key_props.enc')}</option>
+								</Form.Select>
+							</Form.Control>
+							</Form.Field>
+					</Columns.Column>
+					<Columns.Column>
+					<Form.Field>
+						<Form.Label>{props.t('key_props.alg')}</Form.Label>
+						<Form.Control>
+							<Form.Select onChange={props.setAlg} value={props.alg || ''}  className='is-fullwidth'>
+								<option value=''></option>
+								<option value='EdDSA'>{props.t('key_props.signing_alg.EdDSA')}</option>
+							</Form.Select>
+						</Form.Control>
+						</Form.Field>
+					</Columns.Column>
+					<Columns.Column>
+						<Form.Field>
+							<Form.Label>{props.t('key_props.kid')}</Form.Label>
+							<Form.Control>
+								<Form.Input type='text' onChange={props.setKid} value={props.kid || ''} />
+							</Form.Control>
+						</Form.Field>
+					</Columns.Column>
+					<Columns.Column>
+						<GenerateButton generate={props.generate} t={props.t} />
+					</Columns.Column>
+				</Columns>
+		);
 	}
 }
 
@@ -291,7 +351,7 @@ const GenerateButton = ({...props}) => {
 }
 
 const KeyDisplay = ({...props}) => {
-	if (props.kty == 'rsa' || props.kty == 'ec') {
+	if (props.kty == 'rsa' || props.kty == 'ec' || props.kty == 'okp') {
 		return (
 			<Columns>
 				<Columns.Column size='one-third'>

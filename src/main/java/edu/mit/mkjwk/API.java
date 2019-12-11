@@ -3,6 +3,7 @@ package edu.mit.mkjwk;
 import java.util.Map;
 
 import org.mitre.jose.jwk.ECKeyMaker;
+import org.mitre.jose.jwk.OKPKeyMaker;
 import org.mitre.jose.jwk.OctetSequenceKeyMaker;
 import org.mitre.jose.jwk.RSAKeyMaker;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -32,6 +33,9 @@ public class API {
 	ImmutableSet<JWSAlgorithm> octAlgs = ImmutableSet.of(JWSAlgorithm.HS256, JWSAlgorithm.HS384, JWSAlgorithm.HS512);
 	ImmutableSet<JWSAlgorithm> ecAlgs = ImmutableSet.of(JWSAlgorithm.ES256, JWSAlgorithm.ES384, JWSAlgorithm.ES512,
 		JWSAlgorithm.EdDSA, JWSAlgorithm.ES256K);
+
+	ImmutableSet<Curve> ecCurves = ImmutableSet.of(Curve.P_256, Curve.P_256K, Curve.P_384, Curve.P_521);
+	ImmutableSet<Curve> okpCurves = ImmutableSet.of(Curve.Ed25519, Curve.Ed448, Curve.X25519, Curve.X448);
 
 	@RequestMapping(value = "/rsa", method = RequestMethod.GET)
 	public Map<String,Json> makeRSA(
@@ -79,11 +83,37 @@ public class API {
 			alg = null;
 		}
 
+		if (!ecCurves.contains(crv)) {
+			crv = null;
+		}
+
 		JWK jwk = ECKeyMaker.make(crv, keyUse, alg, kid);
 
 		return wrapJwk(jwk);
 
 	}
+
+	@RequestMapping(value = "/okp", method = RequestMethod.GET)
+	public Map<String, Json> makeOKP(
+		@RequestParam(value = "crv", required = false, defaultValue = "P-256") Curve crv,
+		@RequestParam(value = "use", required = false) KeyUse keyUse,
+		@RequestParam(value = "alg", required = false) Algorithm alg,
+		@RequestParam(value = "kid", required = false) String kid
+		) {
+
+	if (!ecAlgs.contains(alg)) {
+		alg = null;
+	}
+
+	if (!okpCurves.contains(crv)) {
+		crv = null;
+	}
+
+	JWK jwk = OKPKeyMaker.make(crv, keyUse, alg, kid);
+
+	return wrapJwk(jwk);
+
+}
 
 	private ImmutableMap<String, Json> wrapJwk(JWK jwk) {
 
