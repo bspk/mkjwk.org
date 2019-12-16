@@ -194,7 +194,7 @@ const KeyProps = ({...props}) => {
 									<option value='P-256'>{props.t('key_props.ec_crv.P256')}</option>
 									<option value='P-384'>{props.t('key_props.ec_crv.P384')}</option>
 									<option value='P-521'>{props.t('key_props.ec_crv.P521')}</option>
-									<option value='P-256K'>{props.t('key_props.ec_crv.P256K')}</option>
+									<option value='secp256k1'>{props.t('key_props.ec_crv.SECP256K1')}</option>
 								</Form.Select>
 							</Form.Control>
 						</Form.Field>
