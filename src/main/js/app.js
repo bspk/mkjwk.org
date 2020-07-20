@@ -385,52 +385,81 @@ const GenerateButton = ({...props}) => {
 }
 
 const KeyDisplay = ({...props}) => {
-	if (props.kty == 'rsa' || props.kty == 'ec' || props.kty == 'okp') {
-		return (
+	const jwk = props.keys.jwk ? (
+		<Columns.Column size={ props.keys.pub ? 'one-third' : 'half' }>
+			<p>{props.t(props.keys.pub ? 'key_display.jwk' : 'key_display.shared_jwk')}</p>
+			<SyntaxHighlighter language='json'
+				customStyle={{wordBreak: 'break-all', wordWrap: 'break-word', whiteSpace: 'pre-wrap'}}
+				>{props.keys.jwk ? JSON.stringify(props.keys.jwk, null, 4) : ''}</SyntaxHighlighter>
+			<Button size="large" color="primary" fullwidth onClick={props.copyToClipboard('jwk')}>{props.t('key_display.copy')}</Button>
+		</Columns.Column>
+	) : null;
+	
+	const jwks = props.keys.jwks ? (
+		<Columns.Column size={ props.keys.pub ? 'one-third' : 'half' }>
+			<p>{props.t(props.keys.pub ? 'key_display.jwks' : 'key_display.shared_jwks')}</p>
+			<SyntaxHighlighter language='json' 
+				customStyle={{wordBreak: 'break-all', wordWrap: 'break-word', whiteSpace: 'pre-wrap'}}
+				>{props.keys.jwks ? JSON.stringify(props.keys.jwks, null, 4) : ''}</SyntaxHighlighter>
+			<Button size="large" color="info" fullwidth onClick={props.copyToClipboard('jwks')}>{props.t('key_display.copy')}</Button>
+		</Columns.Column>
+	) : null;
+	
+	const pub = props.keys.pub ? (
+		<Columns.Column size='one-third'>
+			<p>{props.t('key_display.pub')}</p>
+			<SyntaxHighlighter language='json' 
+				customStyle={{wordBreak: 'break-all', wordWrap: 'break-word', whiteSpace: 'pre-wrap'}}
+				>{props.keys.pub ? JSON.stringify(props.keys.pub, null, 4) : ''}</SyntaxHighlighter>
+			<Button size="large" color="link" fullwidth onClick={props.copyToClipboard('pub')}>{props.t('key_display.copy')}</Button>
+		</Columns.Column>
+	) : null;
+	
+	const x509pub = props.keys.x509pub ? (
+		<Columns.Column size='one-third'>
+			<p>{props.t('key_display.x509pub')}</p>
+			<SyntaxHighlighter language='text' 
+				customStyle={{wordBreak: 'break-all', wordWrap: 'break-word', whiteSpace: 'pre-wrap'}}
+				>{props.keys.x509pub ? props.keys.x509pub : ''}</SyntaxHighlighter>
+			<Button size="large" color="light" fullwidth onClick={props.copyToClipboard('pub')}>{props.t('key_display.copy')}</Button>
+		</Columns.Column>
+	) : null;
+
+	const x509priv = props.keys.x509priv ? (
+		<Columns.Column size='one-third'>
+			<p>{props.t('key_display.x509priv')}</p>
+			<SyntaxHighlighter language='text' 
+				customStyle={{wordBreak: 'break-all', wordWrap: 'break-word', whiteSpace: 'pre-wrap'}}
+				>{props.keys.x509priv ? props.keys.x509priv : ''}</SyntaxHighlighter>
+			<Button size="large" color="warning" fullwidth onClick={props.copyToClipboard('pub')}>{props.t('key_display.copy')}</Button>
+		</Columns.Column>
+	) : null;
+
+	const cert = props.keys.cert ? (
+		<Columns.Column size='one-third'>
+			<p>{props.t('key_display.cert')}</p>
+			<SyntaxHighlighter language='text' 
+				customStyle={{wordBreak: 'break-all', wordWrap: 'break-word', whiteSpace: 'pre-wrap'}}
+				>{props.keys.cert ? props.keys.cert : ''}</SyntaxHighlighter>
+			<Button size="large" color="success" fullwidth onClick={props.copyToClipboard('pub')}>{props.t('key_display.copy')}</Button>
+		</Columns.Column>
+	) : null;
+	
+	return (
+		<>
 			<Columns>
-				<Columns.Column size='one-third'>
-					<p>{props.t('key_display.jwk')}</p>
-					<SyntaxHighlighter language='json'
-						customStyle={{wordBreak: 'break-all', wordWrap: 'break-word', whiteSpace: 'pre-wrap'}}
-						>{props.keys.jwk ? JSON.stringify(props.keys.jwk, null, 4) : ''}</SyntaxHighlighter>
-					<Button size="large" color="primary" fullwidth onClick={props.copyToClipboard('jwk')}>{props.t('key_display.copy')}</Button>
-				</Columns.Column>
-				<Columns.Column size='one-third'>
-					<p>{props.t('key_display.jwks')}</p>
-					<SyntaxHighlighter language='json' 
-						customStyle={{wordBreak: 'break-all', wordWrap: 'break-word', whiteSpace: 'pre-wrap'}}
-						>{props.keys.jwks ? JSON.stringify(props.keys.jwks, null, 4) : ''}</SyntaxHighlighter>
-					<Button size="large" color="info" fullwidth onClick={props.copyToClipboard('jwks')}>{props.t('key_display.copy')}</Button>
-				</Columns.Column>
-				<Columns.Column size='one-third'>
-					<p>{props.t('key_display.pub')}</p>
-					<SyntaxHighlighter language='json' 
-						customStyle={{wordBreak: 'break-all', wordWrap: 'break-word', whiteSpace: 'pre-wrap'}}
-						>{props.keys.pub ? JSON.stringify(props.keys.pub, null, 4) : ''}</SyntaxHighlighter>
-					<Button size="large" color="link" fullwidth onClick={props.copyToClipboard('pub')}>{props.t('key_display.copy')}</Button>
-				</Columns.Column>
+				{jwk}
+				{jwks}
+				{pub}
 			</Columns>
-		);
-	} else {
-		return (
 			<Columns>
-				<Columns.Column size='half'>
-					<p>{props.t('key_display.shared_jwk')}</p>
-					<SyntaxHighlighter language='json' 
-						customStyle={{wordBreak: 'break-all', wordWrap: 'break-word', whiteSpace: 'pre-wrap'}}
-						>{props.keys.jwk ? JSON.stringify(props.keys.jwk, null, 4) : ''}</SyntaxHighlighter>
-					<Button size="large" color="primary" fullwidth onClick={props.copyToClipboard('jwk')}>{props.t('key_display.copy')}</Button>
-				</Columns.Column>
-				<Columns.Column size='half'>
-					<p>{props.t('key_display.shared_jwks')}</p>
-					<SyntaxHighlighter language='json' 
-						customStyle={{wordBreak: 'break-all', wordWrap: 'break-word', whiteSpace: 'pre-wrap'}}
-						>{props.keys.jwks ? JSON.stringify(props.keys.jwks, null, 4) : ''}</SyntaxHighlighter>
-					<Button size="large" color="info" fullwidth onClick={props.copyToClipboard('jwks')}>{props.t('key_display.copy')}</Button>
-				</Columns.Column>
+				{x509priv}
+				{cert}
+				{x509pub}
 			</Columns>
-		);
-	}
+		</>
+	);
+	
 }
 
 const About = ({...props}) => {

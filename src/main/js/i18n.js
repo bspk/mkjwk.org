@@ -25,7 +25,7 @@ const resources = {
 					alg: 'Algorithm',
 					kid: 'Key ID',
 					crv: 'Curve',
-					make_x509: 'Include X509',
+					make_x509: 'Show X.509',
 					signing_alg: {
 			            none: 'none',
 			            HS256: 'HS256 (HMAC using SHA-256)',
@@ -71,7 +71,10 @@ const resources = {
 					pub: 'Public Key',
 					shared_jwk: 'Shared Key',
 					shared_jwks: 'Shared Key Set',
-					copy: 'Copy to Clipboard' 
+					copy: 'Copy to Clipboard',
+					x509pub: 'Public Key (X.509 PEM Format)',
+					x509priv: 'Private Key (X.509 PEM Format)',
+					cert: 'Self-Signed Certificate'
 				},
 				footer: 'Provided as a free service by <a href="https://bspk.io/">Bespoke Engineering</a> and <a href="https://www.authlete.com/">Authlete</a>.'
 			}
