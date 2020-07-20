@@ -370,9 +370,11 @@ const KeyIdSelector = ({...props}) => {
 						<option value='timestamp'>{props.t('key_props.gen.timestamp')}</option>
 					</Form.Select>
 				</Form.Control>
-				<Form.Control fullwidth>
-					<Form.Input type='text' onChange={props.setKid} value={props.kid || ''} />
-				</Form.Control>
+				{ props.gen == 'specified' && (
+					<Form.Control fullwidth>
+						<Form.Input type='text' onChange={props.setKid} value={props.kid || ''} />
+					</Form.Control>
+				)}
 			</Form.Field>
 		</Columns.Column>
 	);
