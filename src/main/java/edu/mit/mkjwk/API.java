@@ -3,6 +3,8 @@ package edu.mit.mkjwk;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.math.BigInteger;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.Certificate;
@@ -209,7 +211,7 @@ public class API {
 	}
 
 	private KeyIdGenerator getKeyIdGenerator(String kid, String gen) {
-		if ("specified".equals(gen)) {
+		if ("specified".equals(gen) || gen == null) {
 			if (kid != null && !kid.trim().isEmpty()) {
 				return new KeyIdGenerator(null, (u, p) -> kid);
 			} else {
@@ -237,7 +239,7 @@ public class API {
 
 	public Certificate selfSign(PublicKey pub, PrivateKey priv, String subjectDN, String signatureAlgorithm) throws OperatorException, CertificateException
 	{
-		X500Name dn = new X500Name("CN=" + subjectDN);
+		X500Name dn = new X500Name("CN=" + URLEncoder.encode(subjectDN, Charset.defaultCharset()));
 
 		BigInteger certSerialNumber = BigInteger.valueOf(Instant.now().toEpochMilli());
 
