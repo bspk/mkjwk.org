@@ -13,6 +13,8 @@ class MkJwk extends React.Component {
 		
 		this.state = {
 				kty: 'rsa',
+				gen: 'specified',
+				x509: false,
 				use: null,
 				alg: null,
 				keys: {
@@ -56,8 +58,16 @@ class MkJwk extends React.Component {
 	}
 	
 	setKid = (e) => {
-		e.target.value;
 		this.setState({kid: e.target.value});
+	}
+	
+	setGen = (e) => {
+		this.setState({gen: e.target.value});
+	}
+	
+	setx509 = (e) => {
+		// force string to reasonable boolean
+		this.setState({x509: !!JSON.parse(e.target.value)});
 	}
 	
 	generate = (e) => {
@@ -67,6 +77,11 @@ class MkJwk extends React.Component {
 		this.appendParam(url, 'alg', this.state.alg);
 		this.appendParam(url, 'use', this.state.use);
 		this.appendParam(url, 'kid', this.state.kid);
+		this.appendParam(url, 'gen', this.state.gen);
+
+		if (this.state.kty == 'rsa' || this.state.kty == 'ec') {
+			this.appendParam(url, 'x509', this.state.x509);
+		}
 		
 		if (this.state.kty == 'rsa' || this.state.kty == 'oct') {
 			this.appendParam(url, 'size', this.state.size);
@@ -89,6 +104,7 @@ class MkJwk extends React.Component {
 		});
 	}
 	
+	// null-safe parameter appender
 	appendParam(url, k, v) {
 		if (v) {
 			url.searchParams.append(k, v);
@@ -119,8 +135,10 @@ class MkJwk extends React.Component {
 					{this.props.t('tabs.okp')}
 					</Tabs.Tab>
 				</Tabs>
-				<KeyProps kty={this.state.kty} crv={this.state.crv} size={this.state.size} use={this.state.use} kid={this.state.kid} alg={this.state.alg}
-					setSize={this.setSize} setUse={this.setUse} setAlg={this.setAlg} setCrv={this.setCrv} setKid={this.setKid} generate={this.generate} t={this.props.t} />
+				<KeyProps kty={this.state.kty} crv={this.state.crv} size={this.state.size} use={this.state.use} kid={this.state.kid} alg={this.state.alg} gen={this.state.gen} x509={this.state.x509}
+					setSize={this.setSize} setUse={this.setUse} setAlg={this.setAlg} setCrv={this.setCrv} setKid={this.setKid} generate={this.generate} setGen={this.setGen} setx509={this.setx509} 
+					t={this.props.t} 
+					/>
 				<KeyDisplay kty={this.state.kty} keys={this.state.keys} t={this.props.t} copyToClipboard={this.copyToClipboard} />
 			</Container>
 		</Section>
@@ -169,18 +187,22 @@ const KeyProps = ({...props}) => {
 						</Form.Control>
 						</Form.Field>
 				</Columns.Column>
+				<KeyIdSelector gen={props.gen} kid={props.kid} setGen={props.setGen} setKid={props.setKid} t={props.t} />
 				<Columns.Column>
-						<Form.Field>
-							<Form.Label>{props.t('key_props.kid')}</Form.Label>
-							<Form.Control>
-								<Form.Input type='text' onChange={props.setKid} value={props.kid || ''} />
-							</Form.Control>
-						</Form.Field>
-					</Columns.Column>
-					<Columns.Column>
-						<GenerateButton generate={props.generate} t={props.t} />
-					</Columns.Column>
-				</Columns>
+					<Form.Field>
+						<Form.Label>{props.t('key_props.make_x509')}</Form.Label>
+						<Form.Control>
+							<Form.Select onChange={props.setx509} value={props.x509.toString()}>
+								<option value='true'>{props.t('key_props.x509.yes')}</option>
+								<option value='false'>{props.t('key_props.x509.no')}</option>
+							</Form.Select>
+						</Form.Control>
+					</Form.Field>
+				</Columns.Column>
+				<Columns.Column>
+					<GenerateButton generate={props.generate} t={props.t} />
+				</Columns.Column>
+			</Columns>
 		);
 	} else if (props.kty == 'ec') {
 		return (
@@ -226,11 +248,15 @@ const KeyProps = ({...props}) => {
 						</Form.Control>
 						</Form.Field>
 					</Columns.Column>
+					<KeyIdSelector gen={props.gen} kid={props.kid} setGen={props.setGen} setKid={props.setKid} t={props.t} />
 					<Columns.Column>
 						<Form.Field>
-							<Form.Label>{props.t('key_props.kid')}</Form.Label>
+							<Form.Label>{props.t('key_props.make_x509')}</Form.Label>
 							<Form.Control>
-								<Form.Input type='text' onChange={props.setKid} value={props.kid || ''} />
+								<Form.Select onChange={props.setx509} value={props.x509.toString()}>
+									<option value='true'>{props.t('key_props.x509.yes')}</option>
+									<option value='false'>{props.t('key_props.x509.no')}</option>
+								</Form.Select>
 							</Form.Control>
 						</Form.Field>
 					</Columns.Column>
@@ -275,14 +301,7 @@ const KeyProps = ({...props}) => {
 						</Form.Control>
 						</Form.Field>
 					</Columns.Column>
-					<Columns.Column>
-						<Form.Field>
-							<Form.Label>{props.t('key_props.kid')}</Form.Label>
-							<Form.Control>
-								<Form.Input type='text' onChange={props.setKid} value={props.kid || ''} />
-							</Form.Control>
-						</Form.Field>
-					</Columns.Column>
+					<KeyIdSelector gen={props.gen} kid={props.kid} setGen={props.setGen} setKid={props.setKid} t={props.t} />
 					<Columns.Column>
 						<GenerateButton generate={props.generate} t={props.t} />
 					</Columns.Column>
@@ -318,30 +337,45 @@ const KeyProps = ({...props}) => {
 							</Form.Field>
 					</Columns.Column>
 					<Columns.Column>
-					<Form.Field>
-						<Form.Label>{props.t('key_props.alg')}</Form.Label>
-						<Form.Control>
-							<Form.Select onChange={props.setAlg} value={props.alg || ''}  className='is-fullwidth'>
-								<option value=''></option>
-								<option value='EdDSA'>{props.t('key_props.signing_alg.EdDSA')}</option>
-							</Form.Select>
-						</Form.Control>
-						</Form.Field>
-					</Columns.Column>
-					<Columns.Column>
 						<Form.Field>
-							<Form.Label>{props.t('key_props.kid')}</Form.Label>
+							<Form.Label>{props.t('key_props.alg')}</Form.Label>
 							<Form.Control>
-								<Form.Input type='text' onChange={props.setKid} value={props.kid || ''} />
+								<Form.Select onChange={props.setAlg} value={props.alg || ''}  className='is-fullwidth'>
+									<option value=''></option>
+									<option value='EdDSA'>{props.t('key_props.signing_alg.EdDSA')}</option>
+								</Form.Select>
 							</Form.Control>
 						</Form.Field>
 					</Columns.Column>
+					<KeyIdSelector gen={props.gen} kid={props.kid} setGen={props.setGen} setKid={props.setKid} t={props.t} />
 					<Columns.Column>
 						<GenerateButton generate={props.generate} t={props.t} />
 					</Columns.Column>
 				</Columns>
 		);
 	}
+}
+
+const KeyIdSelector = ({...props}) => {
+	return (
+		<Columns.Column size="two-fifths">
+			<Form.Label>{props.t('key_props.kid')}</Form.Label>
+			<Form.Field kind='addons'>
+				<Form.Control>
+					<Form.Select onChange={props.setGen} value={props.gen || ''}>
+						<option value='specified'>{props.t('key_props.gen.specified')}</option>
+						<option value='sha256'>{props.t('key_props.gen.sha256')}</option>
+						<option value='sha1'>{props.t('key_props.gen.sha1')}</option>
+						<option value='date'>{props.t('key_props.gen.date')}</option>
+						<option value='timestamp'>{props.t('key_props.gen.timestamp')}</option>
+					</Form.Select>
+				</Form.Control>
+				<Form.Control fullwidth>
+					<Form.Input type='text' onChange={props.setKid} value={props.kid || ''} />
+				</Form.Control>
+			</Form.Field>
+		</Columns.Column>
+	);
 }
 
 const GenerateButton = ({...props}) => {
@@ -464,7 +498,6 @@ class LanguageSwitch extends React.Component {
 
 const urlObject = new URL(window.location);
 const lang = urlObject.searchParams.get('lang')
-console.log(lang)
 
 ReactDOM.render((
 	<LanguageSwitch lang={lang} />

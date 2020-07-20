@@ -36,14 +36,14 @@
 		<dependency>
 			<groupId>org.mitre</groupId>
 			<artifactId>json-web-key-generator</artifactId>
-			<version>0.7</version>
+			<version>0.8</version>
 		</dependency>
 	</dependencies>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<start-class>edu.mit.mkjwk.MkJwk</start-class>
-		<java.version>1.8</java.version>
+		<java.version>14</java.version>
 	</properties>
 
 	<build>

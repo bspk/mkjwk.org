@@ -25,6 +25,7 @@ const resources = {
 					alg: 'Algorithm',
 					kid: 'Key ID',
 					crv: 'Curve',
+					make_x509: 'Include X509',
 					signing_alg: {
 			            none: 'none',
 			            HS256: 'HS256 (HMAC using SHA-256)',
@@ -51,6 +52,17 @@ const resources = {
 			            Ed448: 'Ed448',
 			            X25519: 'X25519',
 			            X448: 'X448'
+		            },
+		            gen: {
+		            	specified: 'Specify',
+		            	sha256: 'SHA-256',
+		            	sha1: 'SHA-1',
+		            	date: 'ISO Date',
+		            	timestamp: 'Timestamp'
+		            },
+		            x509: {
+		            	yes: 'Yes',
+		            	no: 'No'
 		            }
 				},
 				key_display: {
