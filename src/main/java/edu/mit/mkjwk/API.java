@@ -213,7 +213,7 @@ public class API {
 	private KeyIdGenerator getKeyIdGenerator(String kid, String gen) {
 		if ("specified".equals(gen) || gen == null) {
 			if (kid != null && !kid.trim().isEmpty()) {
-				return new KeyIdGenerator(null, (u, p) -> kid);
+				return KeyIdGenerator.specified(kid);
 			} else {
 				return KeyIdGenerator.NONE;
 			}
