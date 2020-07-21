@@ -81,7 +81,7 @@ public class API {
 		if (x509) {
 			Certificate cert = selfSign(jwk.toRSAKey().toPublicKey(),
 				jwk.toRSAKey().toPrivateKey(),
-				jwk.getKeyID(),
+				jwk.getKeyID() != null ? jwk.getKeyID() : jwk.computeThumbprint().toString(),
 				"SHA256withRSA"
 				);
 
@@ -139,7 +139,7 @@ public class API {
 		if (x509) {
 			Certificate cert = selfSign(jwk.toECKey().toPublicKey(),
 				jwk.toECKey().toPrivateKey(),
-				jwk.getKeyID(),
+				jwk.getKeyID() != null ? jwk.getKeyID() : jwk.computeThumbprint().toString(),
 				"SHA256withECDSA"
 				);
 
