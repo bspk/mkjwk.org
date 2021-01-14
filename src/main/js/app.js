@@ -46,7 +46,15 @@ class MkJwk extends React.Component {
 	}
 	
 	setUse = (e) => {
-		this.setState({use: e.target.value});
+		const algs = keyToAlg(this.state.kty, e.target.value);
+		if (this.state.alg && algs.includes(this.state.alg)) {
+			this.setState({use: e.target.value});
+		} else {
+			this.setState({
+				use: e.target.value, 
+				alg: null // reset the algorithm if it's not available for this use
+			});
+		}
 	}
 	
 	setAlg = (e) => {
@@ -147,6 +155,68 @@ class MkJwk extends React.Component {
 	
 }
 
+const AlgSelector = ({...props}) => {
+
+	const algs = keyToAlg(props.kty, props.use);
+
+	const opts = algs.map(a => {
+		return(
+			<option key={a} value={a}>{a}: {props.t('key_props.algs.' + a)}</option>
+		);
+	});
+	
+	return(
+		<Form.Field>
+			<Form.Label>{props.t('key_props.alg')}</Form.Label>
+			<Form.Control>
+				<Form.Select onChange={props.setAlg} value={props.alg || ''}  className='is-fullwidth'>
+					<option value=''></option>
+					{opts}
+				</Form.Select>
+			</Form.Control>
+		</Form.Field>
+	);
+
+}
+
+const keyToAlg = (kty, use) => {
+	if (use) {
+		if (use === 'sig') {
+			if (kty === 'rsa') {
+				return ['RS256','RS384','RS512','PS256','PS384','PS512'];
+			} else if (kty === 'ec') {
+				return ['ES256','ES384','ES512','ES256K'];
+			} else if (kty === 'oct') {
+				return ['HS256','HS384','HS512'];
+			} else if (kty === 'okp') {
+				return ['EdDSA'];
+			} else {
+				return [];
+			}
+		} else if (use === 'enc') {
+			if (kty === 'rsa') {
+				return ['RSA1_5','RSA-OAEP','RSA-OAEP-256'];
+			} else if (kty === 'ec') {
+				return ['ECDH-ES','ECDH-ES+A128KW','ECDH-ES+A192KW','ECDH-ES+A256KW'];
+			} else if (kty === 'oct') {
+				return ['A128KW','A192KW','A256KW','A128GCMKW','A192GCMKW','A256GCMKW','dir'];
+			} else if (kty === 'okp') {
+				return ['ECDH-ES','ECDH-ES+A128KW','ECDH-ES+A192KW','ECDH-ES+A256KW'];
+			} else {
+				return [];
+			}
+		} else {
+			return [];
+		}
+	} else {
+		return [
+			...keyToAlg(kty, 'sig'),
+			...keyToAlg(kty, 'enc')
+		];
+	}
+}
+
+
 const KeyProps = ({...props}) => {
 	if (props.kty == 'rsa') {
 		return (
@@ -172,20 +242,7 @@ const KeyProps = ({...props}) => {
 						</Form.Field>
 				</Columns.Column>
 				<Columns.Column>
-					<Form.Field>
-						<Form.Label>{props.t('key_props.alg')}</Form.Label>
-						<Form.Control>
-							<Form.Select onChange={props.setAlg} value={props.alg || ''}  className='is-fullwidth'>
-								<option value=''></option>
-								<option value='RS256'>{props.t('key_props.signing_alg.RS256')}</option>
-								<option value='RS384'>{props.t('key_props.signing_alg.RS384')}</option>
-								<option value='RS512'>{props.t('key_props.signing_alg.RS512')}</option>
-								<option value='PS256'>{props.t('key_props.signing_alg.PS256')}</option>
-								<option value='PS384'>{props.t('key_props.signing_alg.PS384')}</option>
-								<option value='PS512'>{props.t('key_props.signing_alg.PS512')}</option>
-							</Form.Select>
-						</Form.Control>
-						</Form.Field>
+					<AlgSelector setAlg={props.setAlg} alg={props.alg} use={props.use} kty={props.kty} t={props.t} />
 				</Columns.Column>
 				<KeyIdSelector gen={props.gen} kid={props.kid} setGen={props.setGen} setKid={props.setKid} t={props.t} />
 				<Columns.Column>
@@ -234,19 +291,7 @@ const KeyProps = ({...props}) => {
 							</Form.Field>
 					</Columns.Column>
 					<Columns.Column>
-					<Form.Field>
-						<Form.Label>{props.t('key_props.alg')}</Form.Label>
-						<Form.Control>
-							<Form.Select onChange={props.setAlg} value={props.alg || ''}  className='is-fullwidth'>
-								<option value=''></option>
-								<option value='ES256'>{props.t('key_props.signing_alg.ES256')}</option>
-								<option value='ES384'>{props.t('key_props.signing_alg.ES384')}</option>
-								<option value='ES512'>{props.t('key_props.signing_alg.ES512')}</option>
-								<option value='EdDSA'>{props.t('key_props.signing_alg.EdDSA')}</option>
-								<option value='ES256K'>{props.t('key_props.signing_alg.ES256K')}</option>
-							</Form.Select>
-						</Form.Control>
-						</Form.Field>
+						<AlgSelector setAlg={props.setAlg} alg={props.alg} use={props.use} kty={props.kty} t={props.t} />
 					</Columns.Column>
 					<KeyIdSelector gen={props.gen} kid={props.kid} setGen={props.setGen} setKid={props.setKid} t={props.t} />
 					<Columns.Column>
@@ -289,17 +334,7 @@ const KeyProps = ({...props}) => {
 							</Form.Field>
 					</Columns.Column>
 					<Columns.Column>
-					<Form.Field>
-						<Form.Label>{props.t('key_props.alg')}</Form.Label>
-						<Form.Control>
-							<Form.Select onChange={props.setAlg} value={props.alg || ''}  className='is-fullwidth'>
-								<option value=''></option>
-								<option value='HS256'>{props.t('key_props.signing_alg.HS256')}</option>
-								<option value='HS384'>{props.t('key_props.signing_alg.HS384')}</option>
-								<option value='HS512'>{props.t('key_props.signing_alg.HS512')}</option>
-							</Form.Select>
-						</Form.Control>
-						</Form.Field>
+						<AlgSelector setAlg={props.setAlg} alg={props.alg} use={props.use} kty={props.kty} t={props.t} />
 					</Columns.Column>
 					<KeyIdSelector gen={props.gen} kid={props.kid} setGen={props.setGen} setKid={props.setKid} t={props.t} />
 					<Columns.Column>
@@ -337,15 +372,7 @@ const KeyProps = ({...props}) => {
 							</Form.Field>
 					</Columns.Column>
 					<Columns.Column>
-						<Form.Field>
-							<Form.Label>{props.t('key_props.alg')}</Form.Label>
-							<Form.Control>
-								<Form.Select onChange={props.setAlg} value={props.alg || ''}  className='is-fullwidth'>
-									<option value=''></option>
-									<option value='EdDSA'>{props.t('key_props.signing_alg.EdDSA')}</option>
-								</Form.Select>
-							</Form.Control>
-						</Form.Field>
+						<AlgSelector setAlg={props.setAlg} alg={props.alg} use={props.use} kty={props.kty} t={props.t} />
 					</Columns.Column>
 					<KeyIdSelector gen={props.gen} kid={props.kid} setGen={props.setGen} setKid={props.setKid} t={props.t} />
 					<Columns.Column>

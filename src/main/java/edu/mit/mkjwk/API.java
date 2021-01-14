@@ -53,9 +53,13 @@ public class API {
 	ImmutableSet<Algorithm> rsaAlgs = ImmutableSet.of(JWSAlgorithm.RS256, JWSAlgorithm.RS384, JWSAlgorithm.RS512,
 		JWSAlgorithm.PS256, JWSAlgorithm.PS384, JWSAlgorithm.PS512,
 		JWEAlgorithm.RSA1_5, JWEAlgorithm.RSA_OAEP, JWEAlgorithm.RSA_OAEP_256);
-	ImmutableSet<JWSAlgorithm> octAlgs = ImmutableSet.of(JWSAlgorithm.HS256, JWSAlgorithm.HS384, JWSAlgorithm.HS512);
-	ImmutableSet<JWSAlgorithm> ecAlgs = ImmutableSet.of(JWSAlgorithm.ES256, JWSAlgorithm.ES384, JWSAlgorithm.ES512,
-		JWSAlgorithm.EdDSA, JWSAlgorithm.ES256K);
+	ImmutableSet<Algorithm> octAlgs = ImmutableSet.of(JWSAlgorithm.HS256, JWSAlgorithm.HS384, JWSAlgorithm.HS512,
+		JWEAlgorithm.A128KW, JWEAlgorithm.A192KW, JWEAlgorithm.A256KW,
+		JWEAlgorithm.A128GCMKW, JWEAlgorithm.A192GCMKW, JWEAlgorithm.A256GCMKW,
+		JWEAlgorithm.DIR);
+	ImmutableSet<Algorithm> ecAlgs = ImmutableSet.of(JWSAlgorithm.ES256, JWSAlgorithm.ES384, JWSAlgorithm.ES512,
+		JWSAlgorithm.EdDSA, JWSAlgorithm.ES256K,
+		JWEAlgorithm.ECDH_ES, JWEAlgorithm.ECDH_ES_A128KW, JWEAlgorithm.ECDH_ES_A192KW, JWEAlgorithm.ECDH_ES_A256KW);
 
 	ImmutableSet<Curve> ecCurves = ImmutableSet.of(Curve.P_256, Curve.SECP256K1, Curve.P_384, Curve.P_521);
 	ImmutableSet<Curve> okpCurves = ImmutableSet.of(Curve.Ed25519, Curve.Ed448, Curve.X25519, Curve.X448);
