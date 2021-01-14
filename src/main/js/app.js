@@ -46,7 +46,15 @@ class MkJwk extends React.Component {
 	}
 	
 	setUse = (e) => {
-		this.setState({use: e.target.value});
+		const algs = keyToAlg(this.state.kty, e.target.value);
+		if (this.state.alg && algs.includes(this.state.alg)) {
+			this.setState({use: e.target.value});
+		} else {
+			this.setState({
+				use: e.target.value, 
+				alg: null // reset the algorithm if it's not available for this use
+			});
+		}
 	}
 	
 	setAlg = (e) => {
