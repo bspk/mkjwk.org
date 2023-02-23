@@ -450,7 +450,7 @@ const KeyDisplay = ({...props}) => {
 			<SyntaxHighlighter language='text' 
 				customStyle={{wordBreak: 'break-all', wordWrap: 'break-word', whiteSpace: 'pre-wrap'}}
 				>{props.keys.x509pub ? props.keys.x509pub : ''}</SyntaxHighlighter>
-			<Button size="large" color="light" fullwidth onClick={props.copyToClipboard('pub')}>{props.t('key_display.copy')}</Button>
+			<Button size="large" color="light" fullwidth onClick={props.copyToClipboard('x509pub')}>{props.t('key_display.copy')}</Button>
 		</Columns.Column>
 	) : null;
 
@@ -460,7 +460,7 @@ const KeyDisplay = ({...props}) => {
 			<SyntaxHighlighter language='text' 
 				customStyle={{wordBreak: 'break-all', wordWrap: 'break-word', whiteSpace: 'pre-wrap'}}
 				>{props.keys.x509priv ? props.keys.x509priv : ''}</SyntaxHighlighter>
-			<Button size="large" color="warning" fullwidth onClick={props.copyToClipboard('pub')}>{props.t('key_display.copy')}</Button>
+			<Button size="large" color="warning" fullwidth onClick={props.copyToClipboard('x509priv')}>{props.t('key_display.copy')}</Button>
 		</Columns.Column>
 	) : null;
 
@@ -470,7 +470,7 @@ const KeyDisplay = ({...props}) => {
 			<SyntaxHighlighter language='text' 
 				customStyle={{wordBreak: 'break-all', wordWrap: 'break-word', whiteSpace: 'pre-wrap'}}
 				>{props.keys.cert ? props.keys.cert : ''}</SyntaxHighlighter>
-			<Button size="large" color="success" fullwidth onClick={props.copyToClipboard('pub')}>{props.t('key_display.copy')}</Button>
+			<Button size="large" color="success" fullwidth onClick={props.copyToClipboard('cert')}>{props.t('key_display.copy')}</Button>
 		</Columns.Column>
 	) : null;
 	
