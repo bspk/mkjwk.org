@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import { Button, Tabs, Container, Section, Level, Form, Columns, Content } from 'react-bulma-components';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import i18n from './i18n';
-import { useTranslation } from 'react-i18next';
 import { Translation } from 'react-i18next';
 
 
@@ -87,15 +86,15 @@ class MkJwk extends React.Component {
 		this.appendParam(url, 'kid', this.state.kid);
 		this.appendParam(url, 'gen', this.state.gen);
 
-		if (this.state.kty == 'rsa' || this.state.kty == 'ec') {
+		if (this.state.kty === 'rsa' || this.state.kty === 'ec') {
 			this.appendParam(url, 'x509', this.state.x509);
 		}
 		
-		if (this.state.kty == 'rsa' || this.state.kty == 'oct') {
+		if (this.state.kty === 'rsa' || this.state.kty === 'oct') {
 			this.appendParam(url, 'size', this.state.size);
 		}
 		
-		if (this.state.kty == 'ec' || this.state.kty == 'okp') {
+		if (this.state.kty === 'ec' || this.state.kty === 'okp') {
 			
 			if (!this.state.crv) {
 				alert(this.props.t('curve_required'));
@@ -120,38 +119,135 @@ class MkJwk extends React.Component {
 	}
 	
 	copyToClipboard = (key) => () => {
-		if (this.state.keys[key]) {
-			navigator.clipboard.writeText(JSON.stringify(this.state.keys[key], null, 4));
-		}
-	}
+        if (!this.state.keys[key]) {
+            return;
+        }
+
+        const value = this.state.keys[key];
+        if (!value) return;
+        if (typeof value === 'string') {
+            // PEM / cert: copy as-is
+            navigator.clipboard.writeText(value);
+        } else {
+            // JSON objects: pretty-print
+            navigator.clipboard.writeText(JSON.stringify(value, null, 4));
+        }
+    }
 	
 	render() {
 		return (
 		<Section>
 			<Container>
 				<Tabs type='boxed'>
-					<Tabs.Tab active={this.state.kty == 'rsa'} onClick={this.selectTab('rsa')}>
+					<Tabs.Tab active={this.state.kty === 'rsa'} onClick={this.selectTab('rsa')}>
 					{this.props.t('tabs.rsa')}
 					</Tabs.Tab>
-					<Tabs.Tab active={this.state.kty == 'ec'} onClick={this.selectTab('ec')}>
+					<Tabs.Tab active={this.state.kty === 'ec'} onClick={this.selectTab('ec')}>
 					{this.props.t('tabs.ec')}
 					</Tabs.Tab>
-					<Tabs.Tab active={this.state.kty == 'oct'} onClick={this.selectTab('oct')}>
+					<Tabs.Tab active={this.state.kty === 'oct'} onClick={this.selectTab('oct')}>
 					{this.props.t('tabs.oct')}
 					</Tabs.Tab>
-					<Tabs.Tab active={this.state.kty == 'okp'} onClick={this.selectTab('okp')}>
+					<Tabs.Tab active={this.state.kty === 'okp'} onClick={this.selectTab('okp')}>
 					{this.props.t('tabs.okp')}
 					</Tabs.Tab>
 				</Tabs>
 				<KeyProps kty={this.state.kty} crv={this.state.crv} size={this.state.size} use={this.state.use} kid={this.state.kid} alg={this.state.alg} gen={this.state.gen} x509={this.state.x509}
 					setSize={this.setSize} setUse={this.setUse} setAlg={this.setAlg} setCrv={this.setCrv} setKid={this.setKid} generate={this.generate} setGen={this.setGen} setx509={this.setx509} 
-					t={this.props.t} 
+					t={this.props.t} buildConfigUrl={this.buildConfigUrl}
 					/>
 				<KeyDisplay kty={this.state.kty} keys={this.state.keys} t={this.props.t} copyToClipboard={this.copyToClipboard} />
 			</Container>
 		</Section>
 		);
 	}
+
+    componentDidMount() {
+        this.applyConfigFromUrl();
+    }
+
+    applyConfigFromUrl = () => {
+        const url = new URL(window.location.href);
+        const sp = url.searchParams;
+
+        const kty = sp.get('kty');
+        const allowedKty = ['rsa', 'ec', 'oct', 'okp'];
+        if (kty && allowedKty.includes(kty)) {
+            this.selectTab(kty)(); // select tab
+        }
+
+        const size = sp.get('size');
+        if (size) {
+            this.setSize({ target: { value: size } });
+        }
+
+        const use = sp.get('use');
+        if (use) {
+            this.setUse({ target: { value: use } });
+        }
+
+        const alg = sp.get('alg');
+        if (alg) {
+            this.setAlg({ target: { value: alg } });
+        }
+
+        const crv = sp.get('cve');
+        if (crv) {
+            this.setCrv({ target: { value: crv } });
+        }
+
+        const kid = sp.get('kid');
+        if (kid) {
+            this.setKid({ target: { value: kid } });
+        }
+
+        const x509 = sp.get('x509');
+        if (x509) {
+            const enable = x509.toLowerCase() === 'y';
+            this.setx509({ target: { value: enable ? 'true' : 'false' } });
+        }
+    };
+
+    buildConfigUrl = () => {
+        const u = new URL(window.location.href);
+        const p = u.searchParams;
+
+        // remove old key-related params but keep others (like lang)
+        ['kty', 'size', 'use', 'alg', 'kid', 'cve', 'x509'].forEach(name =>
+            p.delete(name)
+        );
+
+        const { kty, size, use, alg, kid, crv, x509 } = this.state;
+
+        // always include kty
+        p.set('kty', kty);
+
+        if (kty === 'rsa') {
+            if (size) p.set('size', size);
+            if (use)  p.set('use', use);
+            if (alg)  p.set('alg', alg);
+            if (kid)  p.set('kid', kid);
+            if (x509) p.set('x509', 'y'); // absence == false
+        } else if (kty === 'ec') {
+            if (crv)  p.set('cve', crv);
+            if (use)  p.set('use', use);
+            if (alg)  p.set('alg', alg);
+            if (kid)  p.set('kid', kid);
+            if (x509) p.set('x509', 'y');
+        } else if (kty === 'oct') {
+            if (size) p.set('size', size);
+            if (use)  p.set('use', use);
+            if (alg)  p.set('alg', alg);
+            if (kid)  p.set('kid', kid);
+        } else if (kty === 'okp') {
+            if (crv)  p.set('cve', crv);
+            if (use)  p.set('use', use);
+            if (alg)  p.set('alg', alg);
+            if (kid)  p.set('kid', kid);
+        }
+
+        return u.toString();
+    };
 	
 }
 
@@ -218,7 +314,7 @@ const keyToAlg = (kty, use) => {
 
 
 const KeyProps = ({...props}) => {
-	if (props.kty == 'rsa') {
+	if (props.kty === 'rsa') {
 		return (
 			<Columns>
 				<Columns.Column>
@@ -258,10 +354,11 @@ const KeyProps = ({...props}) => {
 				</Columns.Column>
 				<Columns.Column>
 					<GenerateButton generate={props.generate} t={props.t} />
+                    <CopyLinkButton buildConfigUrl={props.buildConfigUrl} t={props.t} />
 				</Columns.Column>
 			</Columns>
 		);
-	} else if (props.kty == 'ec') {
+	} else if (props.kty === 'ec') {
 		return (
 				<Columns>
 					<Columns.Column>
@@ -307,10 +404,11 @@ const KeyProps = ({...props}) => {
 					</Columns.Column>
 					<Columns.Column>
 						<GenerateButton generate={props.generate} t={props.t} />
+                        <CopyLinkButton buildConfigUrl={props.buildConfigUrl} t={props.t} />
 					</Columns.Column>
 				</Columns>
 		);
-	} else if (props.kty == 'oct') {
+	} else if (props.kty === 'oct') {
 		return (
 				<Columns>
 					<Columns.Column>
@@ -339,10 +437,11 @@ const KeyProps = ({...props}) => {
 					<KeyIdSelector gen={props.gen} kid={props.kid} setGen={props.setGen} setKid={props.setKid} t={props.t} />
 					<Columns.Column>
 						<GenerateButton generate={props.generate} t={props.t} />
+                        <CopyLinkButton buildConfigUrl={props.buildConfigUrl} t={props.t} />
 					</Columns.Column>
 				</Columns>
 		);
-	} else if (props.kty == 'okp') {
+	} else if (props.kty === 'okp') {
 		return (
 				<Columns>
 					<Columns.Column>
@@ -377,6 +476,7 @@ const KeyProps = ({...props}) => {
 					<KeyIdSelector gen={props.gen} kid={props.kid} setGen={props.setGen} setKid={props.setKid} t={props.t} />
 					<Columns.Column>
 						<GenerateButton generate={props.generate} t={props.t} />
+                        <CopyLinkButton buildConfigUrl={props.buildConfigUrl} t={props.t} />
 					</Columns.Column>
 				</Columns>
 		);
@@ -397,7 +497,7 @@ const KeyIdSelector = ({...props}) => {
 						<option value='timestamp'>{props.t('key_props.gen.timestamp')}</option>
 					</Form.Select>
 				</Form.Control>
-				{ props.gen == 'specified' && (
+				{ props.gen === 'specified' && (
 					<Form.Control fullwidth>
 						<Form.Input type='text' onChange={props.setKid} value={props.kid || ''} />
 					</Form.Control>
@@ -412,6 +512,23 @@ const GenerateButton = ({...props}) => {
 		<Button onClick={props.generate} fullwidth color='primary' size='large'>{props.t('key_props.generate')}</Button>
 	);
 }
+
+const CopyLinkButton = ({ buildConfigUrl, t }) => {
+    return (
+        <Button
+            fullwidth
+            color="link"
+            size="small"
+            className="mt-2"
+            onClick={() => {
+                const url = buildConfigUrl();
+                navigator.clipboard.writeText(url);
+            }}
+        >
+            {t('key_props.copy_url')}
+        </Button>
+    );
+};
 
 const KeyDisplay = ({...props}) => {
 	const jwk = props.keys.jwk ? (
@@ -527,7 +644,7 @@ class LanguageSwitch extends React.Component {
 	
 	selectTab = (lang) => () => {
 		// short circuit out if it's not changing
-		if (lang == this.state.language) {
+		if (lang === this.state.language) {
 			return;
 		}
 		
@@ -543,10 +660,10 @@ class LanguageSwitch extends React.Component {
 	render = () => {
 		return (
 			<Tabs type='toggle' className='has-background-dark'>
-				<Tabs.Tab active={this.state.language == 'en'} onClick={this.selectTab('en')}>
+				<Tabs.Tab active={this.state.language === 'en'} onClick={this.selectTab('en')}>
 				English
 				</Tabs.Tab>
-				<Tabs.Tab active={this.state.language == 'ja'} onClick={this.selectTab('ja')}>
+				<Tabs.Tab active={this.state.language === 'ja'} onClick={this.selectTab('ja')}>
 				日本語
 			</Tabs.Tab>
 	</Tabs>
@@ -559,18 +676,15 @@ const lang = urlObject.searchParams.get('lang')
 
 ReactDOM.render((
 	<LanguageSwitch lang={lang} />
-	), 
+	),
 	document.getElementById('languageSwitch')
 );
 
-ReactDOM.render((
-	<Translation i18n={i18n}>
-		{
-			(t, { i18n }) => <MkJwk t={t} />
-		}
-	</Translation>
-	),
-	document.getElementById('react')
+ReactDOM.render(
+    <Translation i18n={i18n}>
+        {(t, { i18n }) => <MkJwk t={t} />}
+    </Translation>,
+    document.getElementById('react')
 );
 
 ReactDOM.render((

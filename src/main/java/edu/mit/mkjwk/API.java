@@ -191,13 +191,13 @@ public class API {
 		if (pub != null) {
 
 			return ImmutableMap.of("jwk", new Json(jwk.toJSONString()),
-					"jwks", new Json(jwks.toJSONObject(false).toJSONString()),
+					"jwks", new Json(jwks.toString(false)),
 					"pub", new Json(pub.toJSONString()));
 
 		} else {
 
 			return ImmutableMap.of("jwk", new Json(jwk.toJSONString()),
-					"jwks", new Json(jwks.toJSONObject(false).toJSONString()),
+					"jwks", new Json(jwks.toString(false)),
 					"pub", new Json("null"));
 
 		}

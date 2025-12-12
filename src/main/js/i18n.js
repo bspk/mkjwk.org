@@ -17,6 +17,7 @@ const resources = {
 					okp: 'OKP'
 				},
 				key_props: {
+					copy_url: "Copy Configuration URL",
 					generate: 'Generate',
 					size: 'Key Size',
 					use: 'Key Use',
@@ -105,6 +106,7 @@ const resources = {
 					never: 'このサーバーが<em>生成した鍵を保存したりログに残したりすることは決してありません</em>。内容確認や再利用を可能とするため、このサーバーのソースコードは <a href="https://github.com/mitreid-connect/mkjwk.org">GitHub 上で公開</a>してあります。（離れた場所で動いているサービスを信用することを避けて）自分用の鍵を手元で生成したいのであれば、このサイトでも利用している<a href="https://github.com/mitreid-connect/json-web-key-generator">コマンドライン・ユーティリティー</a>版を使うことができます。'
 				},
 				key_props: {
+					copy_url: "リンクをコピー",
 					generate: '生成する',
 					size: '鍵のサイズ',
 					use: '鍵の用途',
